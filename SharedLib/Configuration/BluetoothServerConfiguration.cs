@@ -9,15 +9,15 @@ namespace Configuration;
 [XmlRoot("BluetoothServerConfiguration")]
 public class BluetoothServerConfiguration
 {
-    [XmlAttribute("name")]
+    [XmlElement("Name")]
     public required string Name { get; set; }
 
-    [XmlAttribute("uuid")]
+    [XmlElement("Uuid")]
     public required string Uuid { get; set; }
 
-    [XmlAttribute("address")]
+    [XmlElement("Address")]
     public required string Address { get; set; }
     
-    [XmlAttribute("script")]
+    [XmlElement("Script")]
     public required string ScriptCommand { get; set; }
 }
