@@ -59,14 +59,15 @@ public abstract class BluetoothCommunication : IDisposable
         _connectionState = BluetoothConnectionState.Disconnected;
         
         _bluetoothScript = new();
-        _bluetoothScript.StartInfo.Arguments = serverConfiguration.ScriptCommand + " " +
-                                              serverConfiguration.Name + " " + 
-                                              serverConfiguration.Uuid + " " +
-                                              serverConfiguration.Address; 
-        
+        _bluetoothScript.StartInfo.FileName = serverConfiguration.InterpreterPath;
+        _bluetoothScript.StartInfo.Arguments = serverConfiguration.ScriptPath + " " +
+                                               serverConfiguration.Name + " " + 
+                                               serverConfiguration.Uuid + " " +
+                                               serverConfiguration.Address;
+        _bluetoothScript.StartInfo.UseShellExecute = false;
+        _bluetoothScript.StartInfo.CreateNoWindow = true;
         _bluetoothScript.StartInfo.RedirectStandardInput = true;
         _bluetoothScript.StartInfo.RedirectStandardOutput = true;
-        
         _bluetoothScript.StandardInput.AutoFlush = true;
 
         _cts = new();

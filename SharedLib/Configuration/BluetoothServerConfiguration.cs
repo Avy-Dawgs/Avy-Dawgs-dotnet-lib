@@ -18,6 +18,9 @@ public class BluetoothServerConfiguration
     [XmlElement("Address")]
     public required string Address { get; set; }
     
-    [XmlElement("Script")]
-    public required string ScriptCommand { get; set; }
+    [XmlElement("ScriptPath")]
+    public required string ScriptPath { get; set; }
+    
+    [XmlElement("InterpreterPath")]
+    public required string InterpreterPath { get; set; }
 }
