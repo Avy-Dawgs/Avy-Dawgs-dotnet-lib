@@ -9,20 +9,34 @@ public enum BluetoothConnectionState
     Disconnected,
 }
 
+/// <summary>
+/// Abstract class representing a bluetooth connection.
+/// Relies on a script which uses standard input and output as the means of communicating.
+/// </summary>
 public abstract class BluetoothCommunication : IDisposable
 {
     private const string ConnectedTag = "[CONNECTED]";
     private const string DisconnectedTag = "[DISCONNECTED]";
     
+    /// <summary>
+    /// New data has been received.
+    /// </summary>
     public event EventHandler<string>? DataReceived;
+    
+    /// <summary>
+    /// The connection state has changed.
+    /// </summary>
     public event EventHandler<BluetoothConnectionState>? ConnectionStateChanged;
     
     private readonly Process _bluetoothScript;
     private readonly CancellationTokenSource _cts;
-    
     private Task? _receiveTask;
     
     private BluetoothConnectionState _connectionState;
+    /// <summary>
+    /// Current connection state. Setting sets off event if state
+    /// has changed.
+    /// </summary>
     private BluetoothConnectionState ConnectionState
     {
         get => _connectionState;
@@ -36,6 +50,10 @@ public abstract class BluetoothCommunication : IDisposable
         }
     }
 
+    /// <summary>
+    /// Constructor taking server configuration.
+    /// </summary>
+    /// <param name="configuration">server configuration</param>
     private protected BluetoothCommunication(BluetoothConfiguration configuration)
     {
         _connectionState = BluetoothConnectionState.Disconnected;
@@ -54,12 +72,19 @@ public abstract class BluetoothCommunication : IDisposable
         _cts = new();
     }
 
+    /// <summary>
+    /// Start the connection.
+    /// </summary>
     public void Start()
     {
         _bluetoothScript.Start();
         _receiveTask = Task.Run(() => ReceiveLoop(_cts.Token));
     }
 
+    /// <summary>
+    /// Main loop for receiving data.
+    /// </summary>
+    /// <param name="token"></param>
     private void ReceiveLoop(CancellationToken token)
     {
         while (true)
@@ -76,26 +101,29 @@ public abstract class BluetoothCommunication : IDisposable
                 continue;
             }
             
-            // find tags
-            int disConTagIdx = newData.IndexOf(DisconnectedTag);
-            if (disConTagIdx != -1)
+            // find connection state tags, remove from stream.
+            int tagIdx = newData.IndexOf(DisconnectedTag);
+            if (tagIdx != -1)
             {
                 ConnectionState = BluetoothConnectionState.Disconnected;
-                newData = newData.Remove(disConTagIdx, DisconnectedTag.Length);
+                newData = newData.Remove(tagIdx, DisconnectedTag.Length);
             }
-
-            int conTagIdx = newData.IndexOf(ConnectedTag);
-            if (conTagIdx != -1)
+            tagIdx = newData.IndexOf(ConnectedTag);
+            if (tagIdx != -1)
             {
                 ConnectionState = BluetoothConnectionState.Connected;
-                newData = newData.Remove(conTagIdx, ConnectedTag.Length);
+                newData = newData.Remove(tagIdx, ConnectedTag.Length);
             }
 
             DataReceived?.Invoke(this, newData);
         }
     }
 
-    
+    /// <summary>
+    /// Send data.
+    /// </summary>
+    /// <param name="data"></param>
+    /// <exception cref="Exception">disconnected, cannot send</exception>
     public void Send(byte[] data)
     {
         if (ConnectionState == BluetoothConnectionState.Disconnected)
@@ -106,6 +134,9 @@ public abstract class BluetoothCommunication : IDisposable
         _bluetoothScript.StandardInput.Write(data);
     }
 
+    /// <summary>
+    /// Dispose of this object by killing the underlying script.
+    /// </summary>
     public void Dispose()
     {
         _cts.Cancel();
