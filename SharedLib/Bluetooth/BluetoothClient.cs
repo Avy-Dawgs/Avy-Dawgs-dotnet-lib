@@ -11,9 +11,9 @@ public class BluetoothClient : BluetoothCommunication
     /// <summary>
     /// Constructor. 
     /// </summary>
-    /// <param name="configuration"></param>
+    /// <param name="serverConfiguration"></param>
     public BluetoothClient(
-        BluetoothConfiguration configuration) : base(configuration)
+        BluetoothServerConfiguration serverConfiguration) : base(serverConfiguration)
     {
         
     }

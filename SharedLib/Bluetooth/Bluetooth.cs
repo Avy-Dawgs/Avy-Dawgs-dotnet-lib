@@ -53,16 +53,16 @@ public abstract class BluetoothCommunication : IDisposable
     /// <summary>
     /// Constructor taking server configuration.
     /// </summary>
-    /// <param name="configuration">server configuration</param>
-    private protected BluetoothCommunication(BluetoothConfiguration configuration)
+    /// <param name="serverConfiguration">server configuration</param>
+    private protected BluetoothCommunication(BluetoothServerConfiguration serverConfiguration)
     {
         _connectionState = BluetoothConnectionState.Disconnected;
         
         _bluetoothScript = new();
-        _bluetoothScript.StartInfo.Arguments = configuration.BluetoothScript + " " +
-                                              configuration.ServerName + " " + 
-                                              configuration.ServerUuid + " " +
-                                              configuration.ServerAddress; 
+        _bluetoothScript.StartInfo.Arguments = serverConfiguration.ScriptCommand + " " +
+                                              serverConfiguration.Name + " " + 
+                                              serverConfiguration.Uuid + " " +
+                                              serverConfiguration.Address; 
         
         _bluetoothScript.StartInfo.RedirectStandardInput = true;
         _bluetoothScript.StartInfo.RedirectStandardOutput = true;

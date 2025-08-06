@@ -10,9 +10,9 @@ public class BluetoothServer : BluetoothCommunication
     /// <summary>
     /// Constructor. 
     /// </summary>
-    /// <param name="configuration"></param>
+    /// <param name="serverConfiguration"></param>
     public BluetoothServer(
-        BluetoothConfiguration configuration) : base(configuration)
+        BluetoothServerConfiguration serverConfiguration) : base(serverConfiguration)
     {
 
     }
